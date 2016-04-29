@@ -6,21 +6,27 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.config.Configuration;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import co.swisapp.dev.swis2.Helpers.UploadStage1;
+import co.swisapp.dev.swis2.Jobs.UploadVideoJob;
 import co.swisapp.dev.swis2.events.TestMessageEvent;
 import co.swisapp.dev.swis2.model.VideoItem;
 
 public class SwisService extends Service {
     private final String TAG = "SWIS_TEST:";
-
+    JobManager jobManager;
     public SwisService() {
     }
 
     @Override
     public void onCreate() {
         Log.i(TAG,"onCreate");
+        jobManager = new JobManager(new Configuration.Builder(this).build());
         EventBus.getDefault().register(this);
     }
 
@@ -32,7 +38,8 @@ public class SwisService extends Service {
 
     @Subscribe
     public void onVideoUpload(VideoItem vid){
-        Log.i(TAG,vid.internalLocation);
+        Log.i(TAG,"Video Uploading");
+        jobManager.addJobInBackground(new UploadVideoJob("yolo"));
     }
 
 
